@@ -1,7 +1,6 @@
 from django.db import models
 
 
-
 class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
