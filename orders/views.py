@@ -3,13 +3,16 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Order
 from .serializers import OrderSerializer
+from .pagination import OrderListPagination
 
 
 class OrderListCreateAPIView(APIView):
     def get(self, request):
-        orders = Order.objects.prefetch_related('order_items').all()
-        serializer = OrderSerializer(orders, many=True)
-        return Response(serializer.data)
+        orders = Order.objects.prefetch_related('items').all()
+        paginator = OrderListPagination()
+        results = paginator.paginate_queryset(orders, request, view=self)
+        serializer = OrderSerializer(results, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         serializer = OrderSerializer(data=request.data)

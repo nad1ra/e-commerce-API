@@ -7,7 +7,7 @@ from .serializers import OrderItemSerializer
 
 class OrderItemListAPIView(APIView):
     def get(self, request):
-        orders = OrderItem.objects.prefetch_related('order_items').all()
+        orders = OrderItem.objects.prefetch_related('order').all()
         serializer = OrderItemSerializer(orders, many=True)
         return Response(serializer.data)
 

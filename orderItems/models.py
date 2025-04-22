@@ -9,5 +9,10 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
+    def save(self, *args, **kwargs):
+        if self.product:
+            self.price = self.product.price
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.quantity} x {self.product.name} in Order {self.order.id}"
