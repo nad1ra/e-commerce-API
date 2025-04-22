@@ -1,15 +1,19 @@
+from django.contrib.admin.templatetags.admin_list import results
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import OrderItem
 from .serializers import OrderItemSerializer
+from .paginations import OrderItemListPagination
 
 
 class OrderItemListAPIView(APIView):
     def get(self, request):
         orders = OrderItem.objects.prefetch_related('order').all()
-        serializer = OrderItemSerializer(orders, many=True)
-        return Response(serializer.data)
+        paginator = OrderItemListPagination()
+        results = paginator.paginate_queryset(orders, request, view=self)
+        serializer = OrderItemSerializer(results, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         serializer = OrderItemSerializer(data=request.data)
